@@ -1,0 +1,8 @@
+pydantic>=2.6
+anthropic>=0.40
+python-dotenv>=1.0
+email-validator>=2.1
+phonenumbers>=8.13
+python-dateutil>=2.9
+rapidfuzz>=3.9
+streamlit>=1.38
