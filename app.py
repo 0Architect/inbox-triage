@@ -9,11 +9,22 @@ Page 3 (Metrics) shows the headline accuracy / $-saved number.
 
 from __future__ import annotations
 
+import json
+import os
 import tempfile
 from pathlib import Path
 
 import anthropic
 import streamlit as st
+
+# Streamlit Community Cloud's secrets manager populates st.secrets, not
+# necessarily os.environ — bridge it before config.py reads the env var, so
+# the same code works locally (.env) and deployed (Cloud secrets) unchanged.
+if "ANTHROPIC_API_KEY" not in os.environ:
+    try:
+        os.environ["ANTHROPIC_API_KEY"] = st.secrets["ANTHROPIC_API_KEY"]
+    except Exception:
+        pass
 
 import config
 import storage
@@ -23,6 +34,8 @@ from schema import Route
 from validate import missing_required_fields as compute_missing_required_fields
 
 st.set_page_config(page_title="Inbox Triage", layout="wide")
+
+METRICS_SNAPSHOT_PATH = Path("data/metrics_snapshot.json")
 
 
 @st.cache_resource
@@ -185,6 +198,16 @@ def page_metrics() -> None:
     st.title("Metrics")
     conn = get_conn()
     metrics = storage.get_metrics(conn)
+
+    if metrics is None and METRICS_SNAPSHOT_PATH.exists():
+        # A fresh deploy (e.g. Streamlit Community Cloud) starts with an empty
+        # DB — fall back to the committed snapshot from the last real
+        # benchmark.py run so the headline number is never blank.
+        metrics = json.loads(METRICS_SNAPSHOT_PATH.read_text())
+        st.caption(
+            f"Showing results from the last benchmark run ({metrics.get('computed_at', 'unknown date')}). "
+            "Run the live demo above to see it work on your own input."
+        )
 
     if metrics is None:
         st.info("No benchmark run yet. Run `python benchmark.py` to populate this page.")
