@@ -103,10 +103,10 @@ def page_live_demo() -> None:
         st.subheader("2. Extracted fields")
         fields = None
         if result.extraction.lead is not None:
-            fields = result.extraction.lead.model_dump()
+            fields = result.extraction.lead.model_dump(mode="json")
             missing = compute_missing_required_fields(result.extraction)
         elif result.extraction.application is not None:
-            fields = result.extraction.application.model_dump()
+            fields = result.extraction.application.model_dump(mode="json")
             missing = fields.get("missing_required_fields", [])
         else:
             missing = []
@@ -158,9 +158,9 @@ def page_review_queue() -> None:
 
             fields = None
             if result.extraction.lead is not None:
-                fields = result.extraction.lead.model_dump()
+                fields = result.extraction.lead.model_dump(mode="json")
             elif result.extraction.application is not None:
-                fields = result.extraction.application.model_dump()
+                fields = result.extraction.application.model_dump(mode="json")
 
             corrected = {}
             if fields:
