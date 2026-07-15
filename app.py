@@ -44,8 +44,14 @@ def get_client() -> anthropic.Anthropic:
     return anthropic.Anthropic()
 
 
-@st.cache_resource
 def get_conn():
+    # Deliberately NOT @st.cache_resource: Streamlit reruns scripts across a
+    # thread pool, and Python's sqlite3 connections are hard-pinned to the
+    # thread that created them — a cached connection shared across sessions
+    # throws "SQLite objects created in a thread can only be used in that
+    # same thread" the moment two reruns land on different threads. Opening
+    # a fresh connection per call sidesteps that entirely; sqlite3.connect()
+    # against a local file is cheap enough that this costs nothing measurable.
     return storage.get_connection(config.DB_PATH)
 
 
