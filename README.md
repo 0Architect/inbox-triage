@@ -2,7 +2,7 @@
 
 Processes inbound emails and applications for property managers. **97.1% field-extraction accuracy** on messy real-world input. **100% of ambiguous/adversarial items** correctly flagged for human review instead of auto-processed. Cuts per-item triage from **~3 min to 15.6 sec**.
 
-**🔗 Live demo:** _deploying now — link goes here_
+**🔗 Live demo:** https://inbox-triage-dqkzawrh3whmn6lebvx9yb.streamlit.app/
 
 ---
 
