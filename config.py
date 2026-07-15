@@ -56,3 +56,9 @@ STAFF_HOURLY_COST_USD = 35.0
 
 # --- Storage ------------------------------------------------------------
 DB_PATH = os.environ.get("INBOX_TRIAGE_DB", "data/inbox_triage.db")
+
+# --- Demo abuse guard --------------------------------------------------
+# Minimum seconds between "Run pipeline" clicks in the Streamlit live-demo
+# page, per browser session. Caps API-cost abuse from someone spamming the
+# button without affecting a genuine prospect trying a couple of examples.
+DEMO_COOLDOWN_SECONDS = 20

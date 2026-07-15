@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import os
 import tempfile
+import time
 from pathlib import Path
 
 import anthropic
@@ -100,7 +101,22 @@ def page_live_demo() -> None:
     uploaded_pdf = st.file_uploader("Optional PDF attachment", type=["pdf"])
     source_id = st.text_input("Source ID (for the demo record)", value="demo-item")
 
-    if st.button("Run pipeline", type="primary", disabled=not email_body.strip()):
+    # Abuse guard: cap how often this browser session can hit the live API,
+    # so someone spamming the button can't run up the API bill. Doesn't
+    # affect a genuine visitor trying a couple of examples.
+    last_run = st.session_state.get("last_demo_run_ts")
+    cooldown_remaining = (
+        config.DEMO_COOLDOWN_SECONDS - (time.time() - last_run) if last_run else 0.0
+    )
+    if cooldown_remaining > 0:
+        st.info(f"Rate-limited to prevent abuse — try again in {cooldown_remaining:.0f}s.")
+
+    if st.button(
+        "Run pipeline",
+        type="primary",
+        disabled=not email_body.strip() or cooldown_remaining > 0,
+    ):
+        st.session_state["last_demo_run_ts"] = time.time()
         pdf_path = None
         if uploaded_pdf is not None:
             tmp_dir = Path(tempfile.mkdtemp())
