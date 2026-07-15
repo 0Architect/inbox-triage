@@ -72,3 +72,7 @@ Three pages: **Live demo** (paste an email, watch it classify → extract → ro
 - Streamlit for the demo/review-queue/metrics UI
 
 No LangChain, no agent framework, no vector DB. Orchestration is a single `process(item) -> TriageResult` function.
+
+## Other work
+
+**[Kworva](https://kworva.netlify.app)** — a campus peer-to-peer marketplace (Android, live beta). [Repo](https://github.com/0Architect/kworva). Included as proof of end-to-end product delivery beyond AI automation work.
